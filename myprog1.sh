@@ -1,34 +1,56 @@
-# BUG: When there is no additional blank line on input1.txt, star of 8 does not get printed.
+#!/bin/bash
+
+#
+# This program creates a histogram that is representation of the distribution of 
+# numerical data. Numeric data is read from a file given as an argument.
+#
+
+# Check whether there is an argument.
+# Exit the program, if there is no argument
 if [ $# -eq 0 ]
 then
-	echo "Please enter file name"
-	exit 1
+	echo "The file name is required as an argument."
+	exit 1 
+else 
+    file=$1 
 fi
 
+
+# Print the histodgram
 for (( i=0; i < 10; i++ ))
 do
-occurrenceCount=0
+# Initialize the repetition count and star string 
+repetitionCount=0 
 star=""
+    # Read number from file
 	while read number
 	do
+        # If the number is greater than or equal to 0, increase the repetition count for it
 		if [ $number -ge 0 ]
 		then
-			if [ $number -eq $i ]
+            # If the number is greater than 9,  exit program with the error code 1
+            if [ $number -gt 9 ]
+            then
+                echo "The input file includes invalid values."
+			    exit 1
+			elif [ $number -eq $i ]
 			then
-				occurrenceCount=`expr $occurrenceCount + 1`
+				repetitionCount=`expr $repetitionCount + 1`
 			fi
+        # If the number is less than 0,  exit program with the error code 1
 		elif [ $number -lt 0 ]
 		then
 			echo "The input file includes invalid values."
 			exit 1			
 		fi
-	done < $1
-	for (( j=0; j<occurrenceCount; j++))
+	done < $file
+
+    # Print the histodgram
+	for (( j=0; j<repetitionCount; j++))
 	do
 		star+="*"
 	done
-	
-echo "$i $star"
+    echo "$i $star"
 done
 
 exit 0
