@@ -15,7 +15,7 @@
 # If the number of parameters is less than or greater than 2, exit program with error code 1
 if [ $# -lt 2 ] || [ $# -gt 2 ] 
 then
-	echo "The number of parameters sould be two."
+	echo "The number of parameters should be two."
 	exit 1
 else 
 	# If the first parameter includes the numeric character, exit program with the error code 1
@@ -40,8 +40,8 @@ else
 	fi
 fi
 
-lletters=({a..z})
-uletters=({A..Z})
+lLetters=({a..z})
+uLetters=({A..Z})
 result=""
 
 # Check whether lenght of word is euqal to lenght of encryption number
@@ -63,7 +63,7 @@ then
 				asc=`expr $asc % 90`
 				asc=`expr $asc + 64`
 			fi
-			result+=`echo "${uletters[$asc-65]}"`
+			result+=`echo "${uLetters[$asc-65]}"`
 		elif [ $asc -ge 97 ] && [ $asc -le 122 ]
 		then
 			asc=`expr $asc + $eNumAsc`
@@ -72,7 +72,7 @@ then
 				asc=`expr $asc % 122`
 				asc=`expr $asc + 96`
 			fi
-			result+=`echo "${lletters[$asc-97]}"`
+			result+=`echo "${lLetters[$asc-97]}"`
 		fi		
 	done
 elif [ ${#encNum} -eq 1 ]
@@ -93,7 +93,7 @@ then
 				asc=`expr $asc % 90`
 				asc=`expr $asc + 64`
 			fi
-			result+=`echo "${uletters[$asc-65]}"`
+			result+=`echo "${uLetters[$asc-65]}"`
 		elif [ $asc -ge 97 ] && [ $asc -le 122 ]
 		then
 			asc=`expr $asc + $eNumAsc`
@@ -102,7 +102,7 @@ then
 				asc=`expr $asc % 122`
 				asc=`expr $asc + 96`
 			fi
-			result+=`echo "${lletters[$asc-97]}"`
+			result+=`echo "${lLetters[$asc-97]}"`
 		fi
 	done
 else
