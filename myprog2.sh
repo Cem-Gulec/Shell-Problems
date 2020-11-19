@@ -1,47 +1,109 @@
-if [ $# -lt 2 ]
+#!/bin/bash
+
+#
+# The program takes a two command line argument, first one being a string and
+# the second one being a number. The number has to have a length of either 1 or same as the
+# string. It converts the input string into a ciphered one using the given number. For each
+# letter in the string, it has to find another letter in English alphabet advacing over the
+# alphabet corresponding digit times, For example
+#
+# $ ./myprog2.sh apple 12345
+# brspj
+#
+
+
+# If the number of parameters is less than or greater than 2, exit program with error code 1
+if [ $# -lt 2 ] || [ $# -gt 2 ] 
 then
-	echo "Please enter the word and encryption number(s)"
+	echo "The number of parameters sould be two."
 	exit 1
+else 
+	# If the first parameter includes the numeric character, exit program with the error code 1
+	# otherwise assing the first parameter value to word variable
+	if echo $1 | egrep -q '^[A-Za-z]+$'
+	then
+		word=$1
+	else
+		echo "First argument should not include numeric character"
+		exit 1
+	fi
+
+	# If the second parameter includes the numeric character, assign the value of it to
+	# encyription number variable,
+	# otherwise exit program with the error code 1
+	if echo $2 | egrep -q '^[0-9]+$'
+	then
+		encNum=$2
+	else
+		echo "Second argument should be a number"
+		exit 1
+	fi
 fi
 
-word=$1
-encNum=$2
-letters=({a..z})
+lletters=({a..z})
+uletters=({A..Z})
 result=""
 
-if [ ${#word} -eq ${#encNum} ]
+# Check whether lenght of word is euqal to lenght of encryption number
+if [ ${#word} -eq ${#encNum} ] 
 then
 	for (( i=0; i<${#word}; i++)); do
-		# find the ascii code of character of words
-		ch=`echo "${word:$i:1}"`
-		asc=`echo "${ch}" | tr -d "\n" | od -An -t uC`
-		# find the ascii code of character of encryption number(s) 
-		eNum=`echo "${encNum:$i:1}"`
-		eNumAsc=`echo "${encNum:$i:1}" | tr -d "\n" | od -An -t uC`
-		# addition word character to encryption number
+		asc=`echo "${word:$i:1}" | tr -d "\n" | od -An -t uC` # Conver the character to  the ascii code
+
+		# Convert the characters of second argument to interger
+		eNumAsc=`echo "${encNum:$i:1}" | tr -d "\n" | od -An -t uC` # Conver the character to  the ascii code
 		eNumAsc=`expr $eNumAsc - 48`
-		asc=`expr $asc + $eNumAsc`
-		if [ $asc -gt 122 ] 
+		
+		# Find the encrypted character
+		if [ $asc -ge 65 ] && [ $asc -le 90 ] 
 		then
-			asc=`expr $asc % 122`
-			asc=`expr $asc + 96`
-		fi
-		result+=`echo "${letters[$asc-97]}"`
+			asc=`expr $asc + $eNumAsc`
+			if [ $asc -gt 90 ] 
+			then
+				asc=`expr $asc % 90`
+				asc=`expr $asc + 64`
+			fi
+			result+=`echo "${uletters[$asc-65]}"`
+		elif [ $asc -ge 97 ] && [ $asc -le 122 ]
+		then
+			asc=`expr $asc + $eNumAsc`
+			if [ $asc -gt 122 ] 
+			then
+				asc=`expr $asc % 122`
+				asc=`expr $asc + 96`
+			fi
+			result+=`echo "${lletters[$asc-97]}"`
+		fi		
 	done
 elif [ ${#encNum} -eq 1 ]
 then
-	eNumAsc=`echo "${encNum}" | tr -d "\n" | od -An -t uC`
+	# Convert the characters of second argument to interger
+	eNumAsc=`echo "${encNum}" | tr -d "\n" | od -An -t uC` # Conver the character to  the ascii code
 	eNumAsc=`expr $eNumAsc - 48`
+
 	for (( i=0; i<${#word}; i++)); do
-		ch=`echo "${word:$i:1}"`
-		asc=`echo "${ch}" | tr -d "\n" | od -An -t uC`
-		asc=`expr $asc + $eNumAsc`
-		if [ $asc -gt 122 ] 
+		asc=`echo "${word:$i:1}" | tr -d "\n" | od -An -t uC` # Conver the character to  the ascii code
+		
+		# Find the ascii code new character
+		if [ $asc -ge 65 ] && [ $asc -le 90 ]
 		then
-			asc=`expr $asc % 122`
-			asc=`expr $asc + 96`
+			asc=`expr $asc + $eNumAsc`
+			if [ $asc -gt 90 ] 
+			then
+				asc=`expr $asc % 90`
+				asc=`expr $asc + 64`
+			fi
+			result+=`echo "${uletters[$asc-65]}"`
+		elif [ $asc -ge 97 ] && [ $asc -le 122 ]
+		then
+			asc=`expr $asc + $eNumAsc`
+			if [ $asc -gt 122 ] 
+			then
+				asc=`expr $asc % 122`
+				asc=`expr $asc + 96`
+			fi
+			result+=`echo "${lletters[$asc-97]}"`
 		fi
-		result+=`echo "${letters[$asc-97]}"`
 	done
 else
 	echo "Input format is incorrect"
