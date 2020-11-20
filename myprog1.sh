@@ -12,7 +12,15 @@ then
 	echo "The file name is required as an argument."
 	exit 1 
 else 
-    file=$1 
+    # If there is no file, exit with the error code 1
+	# otherwise assign argument 1 to file variable
+	if [ -e $1 ] 
+	then
+		file=$1
+	else
+		echo "File does not exist"
+		exit 1
+	fi 
 fi
 
 

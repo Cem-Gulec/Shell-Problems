@@ -110,6 +110,6 @@ else
 	exit 1
 fi
 
-echo $result
+echo "Encrypted string: $result"
 
 exit 0
