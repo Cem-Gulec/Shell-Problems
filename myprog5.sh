@@ -1,48 +1,41 @@
 #!/bin/bash
-# There are 2 possible cases
-# $1 = -R
-# $1 = -R and $2 = wildcard
 
-scrapped_files=""
+#
+# This program finds all the files whose name obeys the wildcard and copy them into a directory named
+# copied. Program can take 2 arguments: a wildcard and a recursive argument "-R". 
+# Wildcard is necessary argument but recursive argument can be optional.
+#
+
 wildcard=""
-recursive=0
 
-# check whether enough arguments entered
-if [ $# -lt 1 ]
+# Check whether satisfying amount of arguments entered
+# If it does not satisfy the condition, exit program with error code 1.
+if [ $# -lt 1 ] || [ $# -gt 2 ]
 then
-	echo "Number of arguments not sufficient."
+	echo "Number of arguments not satisfied."
 	exit 1
 fi
 
-# check whether an option given or not
+# Check whether an option given or not.
+# If the option argument is entered, copy the files recursively.
 if [ "$1" == "-R" ]
 then
-    recursive=1
     wildcard=$2
+    paths=`find -type d -not -path '*/\.*'`   # assign all folders name to a variable without
+                                              # hidden folders.
+
+    for path in $paths
+    do
+        if [[ "$path" !=  *"copied"* ]]       # check whether path string consisting of copied string
+        then
+            mkdir -p $path/copied 
+            cp $path/$wildcard $path/copied
+        fi
+   done
+# If the opiton argument is not entered, only work on current working directory.
 elif [ "$1" != "-R" ]
 then
     wildcard=$1
-else
-    echo "There is problem with arguments."
-fi
-
-# checking whether a recursive option exists
-if [ "$recursive" == "1" ]  
-then
-    scrapped_files=`find -type f $path -name "$wildcard"` # scrap all the files matching with wildcard
-    
-    # loop through .txt files in directory
-    for file in $scrapped_files
-    do
-        base_path="$(echo "${file%/*.txt}")" # remove suffix starting with "*.txt" to extract base path
-        mkdir $base_path/copied 
-        cp $file $base_path/copied
-    done    
-else 
-    scrapped_files=`find -maxdepth 1 -type f $path -name "$wildcard"` 
-    mkdir ./copied
-    for file in $scrapped_files
-    do
-        cp $file ./copied
-    done
+    mkdir -p $PWD/copied
+    cp $PWD/$wildcard $PWD/copied
 fi
