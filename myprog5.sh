@@ -42,8 +42,7 @@ then
 
             # if there is no file that obeys the wildcard, exit program with error code 1
             if [ $file_count -eq 0 ]; then
-                echo "There is no file that obeys the wildcard"
-                exit 1
+                echo "There is no file that obeys the wildcard under $PWD"
             fi
 
             for file in $files
@@ -53,9 +52,11 @@ then
                 if [ -d copied ]
                 then
                     cp $file copied
+                    echo "$file is copied under to $PWD/copied"
                 else
                     mkdir copied
                     cp $file copied
+                    echo "$file is copied under to $PWD/copied"
                 fi                
             done
         fi
@@ -76,8 +77,7 @@ then
 
     # if there is no file that obeys the wildcard, exit program with error code 1
     if [ $file_count -eq 0 ]; then
-        echo "There is no file that obeys the wildcard"
-        exit 1
+        echo "There is no file that obeys the wildcard under $PWD"
     fi
 
     for file in $files
@@ -87,14 +87,14 @@ then
         if [ -d copied ]
         then
             cp $file copied
+            echo "$file is copied under to $PWD/copied"
         else
             mkdir copied
             cp $file copied
+            echo "$file is copied under to $PWD/copied"
         fi
     done
 
 fi
-
-echo "Copy process is done"
 
 exit 0
