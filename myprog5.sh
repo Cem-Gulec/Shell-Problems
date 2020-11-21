@@ -1,3 +1,6 @@
+# TODO Eğer wildcard a uyan bir dosya yok ise hata veriyor ve yine de dosya açıyor.
+# Kopyalama işlemine başlamadan önce wildcard a uyan dosya var mı yok mu kontrol et.
+
 #!/bin/bash
 
 #
@@ -7,6 +10,7 @@
 #
 
 wildcard=""
+
 
 # Check whether satisfying amount of arguments entered
 # If it does not satisfy the condition, exit program with error code 1.
@@ -20,7 +24,13 @@ fi
 # If the option argument is entered, copy the files recursively.
 if [ "$1" == "-R" ]
 then
-    wildcard=$2
+    current_directory=$PWD  # Store the current directory path into a variable
+							# to go back
+
+    # Delete " sign at the beginning and ending of wildcard
+    wildcard=${2#\"}
+    wildcard=${wildcard%\"}
+
     paths=`find -type d -not -path '*/\.*'`   # assign all folders name to a variable without
                                               # hidden folders.
 
@@ -28,14 +38,66 @@ then
     do
         if [[ "$path" !=  *"copied"* ]]       # check whether path string consisting of copied string
         then
-            mkdir -p $path/copied 
-            cp $path/$wildcard $path/copied
+            cd $path
+            files=`ls $wildcard 2>/dev/null` # Store the all paths that obeys the whildcard without error
+            
+            file_count=`ls $wildcard 2>/dev/null | wc -l`
+
+            # if there is no file that obeys the wildcard, exit program with error code 1
+            if [ $file_count -eq 0 ]; then
+                echo "There is no file that obeys the wildcard"
+                exit 1
+            fi
+
+            for file in $files
+            do
+                # if copied folder exist, copy the file(s) into copied folder
+                # otherwise create copied folder, then copy the file(s) in it
+                if [ -d copied ]
+                then
+                    cp $file copied
+                else
+                    mkdir copied
+                    cp $file copied
+                fi                
+            done
         fi
+
+        cd $current_directory
+        
    done
 # If the opiton argument is not entered, only work on current working directory.
 elif [ "$1" != "-R" ]
 then
-    wildcard=$1
-    mkdir -p $PWD/copied
-    cp $PWD/$wildcard $PWD/copied
+    # Delete " sign at the beginning and ending of wildcard
+    wildcard=${1#\"}
+    wildcard=${wildcard%\"} 
+
+    files=`ls $wildcard 2>/dev/null`    # Store the all paths that obeys the whildcard without error
+
+    file_count=`ls $wildcard 2>/dev/null | wc -l`
+
+    # if there is no file that obeys the wildcard, exit program with error code 1
+    if [ $file_count -eq 0 ]; then
+        echo "There is no file that obeys the wildcard"
+        exit 1
+    fi
+
+    for file in $files
+    do
+        # if copied folder exist, copy the file(s) into copied folder
+        # otherwise create copied folder, then copy the file(s) in it
+        if [ -d copied ]
+        then
+            cp $file copied
+        else
+            mkdir copied
+            cp $file copied
+        fi
+    done
+
 fi
+
+echo "Copy process is done"
+
+exit 0
