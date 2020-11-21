@@ -1,6 +1,3 @@
-# TODO Eğer wildcard a uyan bir dosya yok ise hata veriyor ve yine de dosya açıyor.
-# Kopyalama işlemine başlamadan önce wildcard a uyan dosya var mı yok mu kontrol et.
-
 #!/bin/bash
 
 #
