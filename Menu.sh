@@ -33,12 +33,22 @@ do
       4) echo -n "Please enter the file name to convert number to string: "
          read fileName
          ./myprog4.sh $fileName;;
-      5) echo -n "Please include arguments [like -R \"c*.txt\"clear (R is optional)]: "
-         read str
-         arg1=`echo $str | cut -d' ' -f 1`
-         arg2=`echo $str | cut -d' ' -f 2`
-
-         ./myprog5.sh $arg1 "$arg2";;
+      5) echo -n "Please enter wildcard argument to copying process: "
+         read wildcard
+         #tmp=${wildcard#\"}   # remove prefix ending in ""
+         #b=${tmp%\"}   # remove suffix starting with "_"
+         echo -n "Is the copying process recursive [y/n]: "
+         read recursive
+         if [[ $recursive == "y" ]]
+         then
+            ./myprog5.sh -R $wildcard
+         elif [[ $recursive == "n" ]]
+         then
+            ./myprog5.sh $wildcard
+         else
+            echo "Your optional input is invalid"
+         fi
+         ;;
       6) exit 0 ;;
       *) echo "Out of range!!";;
    esac
